@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cug.lab.dao.SysUserMapper" >
+  <resultMap id="BaseResultMap" type="com.cug.lab.model.SysUser" >
+    <id column="userId" property="userId" jdbcType="BIGINT" />
+    <result column="userCode" property="userCode" jdbcType="BIGINT" />
+    <result column="userName" property="userName" jdbcType="VARCHAR" />
+    <result column="userPsd" property="userPsd" jdbcType="VARCHAR" />
+    <result column="userSalt" property="userSalt" jdbcType="VARCHAR" />
+    <result column="userRoleIds" property="userRoleIds" jdbcType="VARCHAR" />
+    <result column="userCompany" property="userCompany" jdbcType="VARCHAR" />
+    <result column="userAddress" property="userAddress" jdbcType="VARCHAR" />
+    <result column="userCreateTime" property="userCreateTime" jdbcType="TIMESTAMP" />
+    <result column="userLocked" property="userLocked" jdbcType="BIT" />
+
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    userId, userCode, userName, userPsd, userSalt, userRoleIds, userLocked,userCompany,userAddress,userCreateTime
+  </sql>
+
+  <insert id="createUser" parameterType="com.cug.lab.model.SysUser" >
+    insert into sys_user (userCode, userName, userPsd, userSalt, userRoleIds,
+        userLocked,userCompany,userAddress,userCreateTime)
+    values (#{userCode,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR},
+      #{userPsd,jdbcType=VARCHAR}, #{userSalt,jdbcType=VARCHAR}, #{userRoleIds,jdbcType=VARCHAR},
+      #{userLocked,jdbcType=BIT},#{userCompany,jdbcType=VARCHAR}, #{userAddress,jdbcType=VARCHAR},
+      #{userCreateTime,jdbcType=TIMESTAMP})
+  </insert>
+
+  <update id="updateUser" parameterType="com.cug.lab.model.SysUser" >
+    update sys_user
+    <set >
+      <if test="userCode != null" >
+        userCode = #{userCode,jdbcType=BIGINT},
+      </if>
+      <if test="userName != null" >
+        userName = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userPsd != null" >
+        userPsd = #{userPsd,jdbcType=VARCHAR},
+      </if>
+      <if test="userSalt != null" >
+        userSalt = #{userSalt,jdbcType=VARCHAR},
+      </if>
+      <if test="userRoleIds != null" >
+        userRoleIds = #{userRoleIds,jdbcType=VARCHAR},
+      </if>
+      <if test="userLocked != null" >
+        userLocked = #{userLocked,jdbcType=BIT},
+      </if>
+      <if test="userCompany != null" >
+        userCompany = #{userCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="userAddress != null" >
+        userAddress = #{userAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="userCreateTime != null" >
+        userCreateTime = #{userCreateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where userId = #{userId,jdbcType=BIGINT}
+  </update>
+
+  <delete id="deleteUser" parameterType="java.lang.Long" >
+    delete from sys_user
+    where userId = #{userId,jdbcType=BIGINT}
+  </delete>
+
+  <delete id="deleteListUser" parameterType="java.util.List">
+    DELETE FROM sys_user
+    where userId in
+    <foreach collection="list" index="index" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+
+  <select id="findOne" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select <include refid="Base_Column_List" />
+    from sys_user
+    where userId = #{userId,jdbcType=BIGINT}
+  </select>
+
+  <select id="findAll" resultMap="BaseResultMap" parameterType="com.cug.lab.utils.Page" >
+    select
+    <include refid="Base_Column_List" />
+    from sys_user
+    limit #{courent},#{rows}
+  </select>
+
+  <select id="findByUsername" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select <include refid="Base_Column_List" />
+    from sys_user
+    where userName = #{userName,jdbcType=VARCHAR}
+  </select>
+
+  <select id="getTotle" resultType="Integer" >
+   select count(*)
+    from sys_user
+  </select>
+  <select id="checkName" resultMap="BaseResultMap" parameterType="com.cug.lab.model.SysUser">
+    select *
+    from sys_user
+    where userName = #{userName,jdbcType=VARCHAR}
+  </select>
+
+  <select id="getUserTotleBy" resultType="Integer" parameterType="com.cug.lab.model.SysUser">
+    select count(*)
+    from sys_user
+    where 1=1
+      <if test="userName != null" >
+        and userName = #{userName}
+      </if>
+      <if test="userCode != null" >
+        and userCode = #{userCode}
+      </if>
+      <if test="userAddress != null" >
+        and userAddress = #{userAddress}
+      </if>
+      <if test="userRoleIds != null" >
+        and userRoleIds = #{userRoleIds}
+      </if>
+  </select>
+
+  <select id="findAllBy" resultMap="BaseResultMap" parameterType="map">
+    select *
+    from sys_user
+   	where 1 = 1
+    <if test="sysUser.userName != null" >
+      and userName = #{sysUser.userName}
+    </if>
+    <if test="sysUser.userCode != null" >
+      and userCode = #{sysUser.userCode}
+    </if>
+    <if test="sysUser.userAddress != null" >
+      and userAddress = #{sysUser.userAddress}
+    </if>
+    <if test="sysUser.userRoleIds != null" >
+      and userRoleIds = #{sysUser.userRoleIds}
+    </if>
+    limit #{page.courent},#{page.rows}
+  </select>
+
+</mapper>

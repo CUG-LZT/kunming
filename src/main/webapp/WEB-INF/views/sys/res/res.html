@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>userlist</title>
+    <link href="../../static/InsdepUI/insdep.easyui.min.css" rel="stylesheet" type="text/css">
+    <link href="../../static/InsdepUI/icon.css" rel="stylesheet" type="text/css">
+    <link href="../../static/css/res.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="../../static/js/res.js"></script>
+    <script type="text/javascript" src="../../static/InsdepUI/jquery.min.js"></script>
+    <script type="text/javascript" src="../../static/InsdepUI/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="../../static/InsdepUI/insdep.extend.min.js"></script>
+    <style>
+        #data{
+            width:98%;
+            height:95%;
+            margin: auto;
+            position: absolute;
+            top: 0;
+            right:0;
+            bottom: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="data">
+        <table id="ResourceTable"  title="资源管理" class="easyui-treegrid"
+               data-options="url: 'selectAllRes.json',
+                    method: 'get',
+                    fitColumns:true,
+                    lines: true,
+                    rownumbers: true,
+                    idField: 'resId',
+                    treeField: 'resType'">
+            <thead>
+                <tr>
+                    <th data-options="field:'resType'" width="130">资源类型</th>
+                    <th data-options="field:'resName'" width="115"  align="center">资源名称</th>
+                    <th data-options="field:'resUrl'" width="120" align="center">资源路径</th>
+                    <th data-options="field:'resPermission'" width="100"  align="center">权限字符串</th>
+                    <th data-options="field:'resParentId'" width="40" align="center">父编号</th>
+                    <th data-options="field:'resParentIds'" width="90" align="center">父编号列表</th>
+                    <th data-options="field:'resIcon'" width="90"  align="center">图标</th>
+                    <th data-options="field:'resAvailable'" width="60" align="center">是否可用</th>
+                    <th field="opera" width="150" align="center" formatter="opera">操作</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+    <!--================================================添加页面====================================-->
+    <div id="add_dlg" class="easyui-dialog" title="添加资源" style="width:300px;height:410px;padding:10px" data-options="
+                    iconCls: 'icon-newedit',
+                    modal:true,
+                    closed:true,
+                    buttons: [{
+                        text:'添加',
+                        iconCls:'icon-newadd',
+                        handler:function(){
+                        addChild();
+                        }
+                    },{
+                        text:'取消',
+                        iconCls:'icon-cancel',
+                        handler:function(){
+                            $('#add_dlg').dialog('close');
+                        }
+                    }]
+                ">
+        <form id="add_res_dlg_form" method="post" style="width:280px;padding-left:5px;padding-top:10px;float: left">
+            <table style="font-size:10px;">
+                <tr>
+                    <td>资源类型:</td>
+                    <td> <input id="add_dialog_resType" data-options="required:true" class="easyui-textbox" type="text" editable="false"
+                                name="resType" style="width:200px;height:32px;"></input></td>
+                </tr>
+                <tr>
+                    <td>资源名称:</td>
+                    <td><input id="add_dialog_resName" data-options="required:true" class="easyui-textbox" type="text"
+                               name="resName" style="width:200px;height:32px;"></input></td>
+                </tr>
+                <tr>
+                    <td>资源路径:</td>
+                    <td>
+                        <input id="add_dialog_resUrl"  class="easyui-textbox" type="text"
+                               name="resUrl" style="width:200px;height:32px;"></input></td>
+                </tr>
+                <tr>
+                    <td>权限字符串:</td>
+                    <td><input id="add_dialog_resPermission" data-options="required:true" class="easyui-textbox" type="text"
+                               name="resPermission" style="width:200px;height:32px;"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td>父编号:</td>
+                    <td><input id="add_dialog_resParentId" data-options="required:true" class="easyui-textbox" type="text" editable="false"
+                               name="resParentId" style="width:200px;height:32px;"></input></td>
+                </tr>
+                <tr>
+                    <td>父编号列表:</td>
+                    <td><input id="add_dialog_resParentIds" data-options="required:true" class="easyui-textbox" type="text" editable="false"
+                               name="resParentIds" style="width:200px;height:32px;"></input></td>
+                </tr>
+                <tr>
+                    <td>图标:</td>
+                    <td><input id="add_dialog_resIcon" class="easyui-textbox" type="text"
+                               name="resIcon" style="width:200px;height:32px;"></input></td>
+                </tr>
+                <tr>
+                    <td>是否可用:</td>
+                    <td><input id="add_dialog_resAvailable" data-options="required:true" class="easyui-textbox" type="text" editable="false"
+                               name="resAvailable" style="width:200px;height:32px;"></input>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+
+    <!--================================================编辑页面====================================-->
+    <div id="edit_dlg" class="easyui-dialog" title="添加资源" style="width:310px;height:440px;padding:10px" data-options="
+                    iconCls: 'icon-newedit',
+                    modal:true,
+                    closed:true,
+                    buttons: [{
+                        text:'添加',
+                        iconCls:'icon-newadd',
+                        handler:function(){
+                        updateResource();
+                        }
+                    },{
+                        text:'取消',
+                        iconCls:'icon-cancel',
+                        handler:function(){
+                            $('#edit_dlg').dialog('close');
+                        }
+                    }]
+                ">
+        <form id="edit_res_dlg_form" method="post" style="width:280px;padding-left:5px;padding-top:10px;float: left">
+            <table style="font-size:10px;">
+                <tr>
+                    <td>资源ID:</td>
+                    <td> <input id="edit_dialog_resId" data-options="required:true" class="easyui-textbox" type="text" editable="false"
+                                name="resId" style="width:200px;height:32px;"></input></td>
+                </tr>
+                <tr>
+                    <td>资源类型:</td>
+                    <td> <input id="edit_dialog_resType" data-options="required:true" class="easyui-textbox" type="text" editable="false"
+                                name="resType" style="width:200px;height:32px;"></input></td>
+                </tr>
+                <tr>
+                    <td>资源名称:</td>
+                    <td><input id="edit_dialog_resName" data-options="required:true" class="easyui-textbox" type="text"
+                               name="resName" style="width:200px;height:32px;"></input></td>
+                </tr>
+                <tr>
+                    <td>资源路径:</td>
+                    <td>
+                        <input id="edit_dialog_resUrl"  class="easyui-textbox" type="text"
+                               name="resUrl" style="width:200px;height:32px;"></input></td>
+                </tr>
+                <tr>
+                    <td>权限字符串:</td>
+                    <td><input id="edit_dialog_resPermission" data-options="required:true" class="easyui-textbox" type="text"
+                               name="resPermission" style="width:200px;height:32px;"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td>父编号:</td>
+                    <td><input id="edit_dialog_resParentId" data-options="required:true" class="easyui-textbox" type="text" editable="false"
+                               name="resParentId" style="width:200px;height:32px;"></input></td>
+                </tr>
+                <tr>
+                    <td>父编号列表:</td>
+                    <td><input id="edit_dialog_resParentIds" data-options="required:true" class="easyui-textbox" type="text" editable="false"
+                               name="resParentIds" style="width:200px;height:32px;"></input></td>
+                </tr>
+                <tr>
+                    <td>图标:</td>
+                    <td><input id="edit_dialog_resIcon" class="easyui-textbox" type="text"
+                               name="resIcon" style="width:200px;height:32px;"></input></td>
+                </tr>
+                <tr>
+                    <td>是否可用:</td>
+                    <td><input id="edit_dialog_resAvailable" data-options="required:true" class="easyui-textbox" type="text" editable="false"
+                               name="resAvailable" style="width:200px;height:32px;"></input>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</body>
+</html>

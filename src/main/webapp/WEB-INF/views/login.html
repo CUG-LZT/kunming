@@ -1,0 +1,53 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理-登陆</title>
+    <link rel="stylesheet" href="static/css/layui.css">
+    <link href="static/InsdepUI/insdep.easyui.min.css" rel="stylesheet" type="text/css">
+    <link href="static/InsdepUI/icon.css" rel="stylesheet" type="text/css">
+    <link href="static/css/login.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+<div id="container"
+     style="width: 100%; height: 480px; position: absolute; top: 50%; margin-top: -240px; background-image: url('static/image/bg.jpg')">
+    <div class="admin-login-background">
+        <div class="admin-header">
+            <i class="layui-icon layui-icon-template-1"
+               style="margin-left: 20px; margin-top: 10px; font-size: 30px;"></i>
+            <a href="register.page"
+               style="float: right; margin-right: 20px; margin-top: 15px; font-size: 16px; font-weight: 800">用户注册</a>
+        </div>
+        <form class="layui-form" action="login.json" method="post">
+            <div>
+                <i class="layui-icon layui-icon-username admin-icon admin-icon-username"></i>
+                <input type="text" name="userName" placeholder="请输入用户名" required
+                       autocomplete="off"
+                       class="layui-input admin-input admin-input-username">
+            </div>
+            <div>
+                <i
+                        class="layui-icon layui-icon-password admin-icon admin-icon-password"></i>
+                <input type="password" name="userPsd" required placeholder="请输入密码"
+                       autocomplete="off"
+                       class="layui-input admin-input admin-input-verify">
+            </div>
+            <span style="float: right; padding-right: 30px"> ${error!''} </span>
+            <button class="layui-btn admin-button">登陆</button>
+        </form>
+    </div>
+    <div id="tip" class="alert-warning">
+        <b>提示：</b><br /> 请勿使用<a
+            href="https://support.microsoft.com/zh-cn/help/17621/internet-explorer-downloads"
+            target="view_window" style="color: rgb(0, 125, 220)">&nbsp;IE11&nbsp;</a>版本之前的IE浏览器，平台功能将不支持。推荐<a
+            href="https://www.google.cn/chrome" target="view_window"
+            style="color: rgb(0, 125, 220)">&nbsp;谷歌&nbsp;</a> | <a
+            href="http://www.firefox.com.cn/" target="view_window"
+            style="color: rgb(0, 125, 220)">&nbsp;火狐&nbsp;</a> | <a
+            href="https://ie.sogou.com/" target="view_window"
+            style="color: rgb(0, 125, 220)">&nbsp;搜狗&nbsp;</a>等浏览器！
+    </div>
+</div>
+<script src="static/js/layui.js"></script>
+</body>
+</html>

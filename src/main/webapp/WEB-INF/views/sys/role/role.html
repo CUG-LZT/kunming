@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>userlist</title>
+    <link href="../../static/InsdepUI/insdep.easyui.min.css" rel="stylesheet" type="text/css">
+    <link href="../../static/InsdepUI/icon.css" rel="stylesheet" type="text/css">
+    <link href="../../static/css/role.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="../../static/js/role.js"></script>
+    <script type="text/javascript" src="../../static/InsdepUI/jquery.min.js"></script>
+    <script type="text/javascript" src="../../static/InsdepUI/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="../../static/InsdepUI/insdep.extend.min.js"></script>
+</head>
+<body>
+    <!-- --------------------主页面 -------------------------------- -->
+    <div id="data">
+        <table class="easyui-datagrid" id="dg" title="角色管理" style="width:100%;height:100%;padding:0px;margin:0px"
+               data-options="
+                    rownumbers:true,
+                    url:'../../sys/role/selectAllRole.json',
+                    autoRowHeight:false,
+                    pagination:true,
+                    pageSize:10,
+                    pageList:[10,20,30,40,50,100,200],
+                    fitColumns:true,
+                    autoRowHeight: false,
+                    toolbar:'#tb'">
+            <thead>
+            <tr>
+                <th field="roleId" checkbox=true align="center">ID</th>
+                <th field="roleName" width="40" align="center">角色名称</th>
+                <th field="roleDescription" width="50" align="center">角色描述</th>
+                <th field="roleLevel" width="50" align="center">角色权重</th>
+                <th field="roleAvailable" width="50" align="center">是否可用</th>
+                <th field="roleResourceIds" width="150" align="center" >角色权限</th>
+                <th field="opera" width="60" align="center" formatter="opera">操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <div id="tb" style="padding:0px;height:auto">
+        <div style="padding-left: 12px">
+            <!-- add delete -->
+            <a href="#" class="easyui-linkbutton" iconCls="icon-newadduser" onclick="openAddRoleDialog()" plain="true"></a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-newdelete" onclick="deleteListRole()" plain="true"></a>
+        </div>
+    </div>
+    <!-- --------------------编辑页面 -------------------------------- -->
+    <div id="dlg" class="easyui-dialog" title="编辑角色" style="width:600px;height:580px;padding:10px" data-options="
+                    iconCls: 'icon-newedit',
+                    modal:true,
+                    closed:true,
+                    buttons: [{
+                        text:'保存',
+                        iconCls:'icon-newadd',
+                        handler:function(){
+                            editRole();
+                        }
+                    },{
+                        text:'取消',
+                        iconCls:'icon-cancel',
+                        handler:function(){
+                            $('#dlg').dialog('close');
+                        }
+                    }]
+                ">
+        <form id="edit_dlg_f" method="post" style="width:280px;padding-left:5px;padding-top:10px;float: left">
+            <table style="font-size:10px;">
+                <tr>
+                    <td>角色ID:</td>
+                    <td><input id="edit_dialog_roleId" data-options="required:true" class="easyui-textbox" type="text"
+                               name="roleId" style="width:200px;height:32px;"></input></td>
+                </tr>
+                <tr>
+                    <td>角色名称:</td>
+                    <td><input id="edit_dialog_roleName" data-options="required:true" class="easyui-textbox" type="text"
+                               name="roleName" style="width:200px;height:32px;"></input></td>
+                </tr>
+                <tr>
+                    <td>角色描述:</td>
+                    <td><input id="edit_dialog_roleDescription" data-options="required:true" class="easyui-textbox" type="text"
+                               name="roleDescription" style="width:200px;height:32px;"></input></td>
+                </tr>
+                <tr>
+                    <td>角色权重:</td>
+                    <td>
+                        <input id="edit_dialog_roleLevel" data-options="required:true" class="easyui-textbox" type="text"
+                               name="roleLevel" editable="false" style="width:200px;height:32px;"></input></td>
+                </tr>
+                <tr>
+                    <td>角色权限:</td>
+                    <td><input id="edit_dialog_roleResourceIds" data-options="required:true" class="easyui-textbox" type="text" editable="false"
+                               name="roleResourceIds" style="width:200px;height:32px;"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><a href="#"
+                           onclick="editResourcesToText()"
+                           class="easyui-linkbutton c1"
+                           style="background-color: rgb(0,125,255);width: 100%;color: #E9E7E7"
+                           data-options="plain:true,toggle:true,group:'g1'"
+                           style="width: 100%; text-align: left; padding-left: 20px">添加右侧权限</a>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <div style="width:280px;float:right;padding-top:10px;border:#0d478f 1px dashed">
+            <ul id="edit_roleResourceIdsTree" class="easyui-tree"
+                data-options="method:'get',animate:true,checkbox:true"></ul>
+        </div>
+    </div>
+    <!-- --------------------添加页面 -------------------------------- -->
+    <div id="add_dlg" class="easyui-dialog" title="添加角色" style="width:600px;height:580px;padding:10px" data-options="
+                    iconCls: 'icon-newedit',
+                    modal:true,
+                    closed:true,
+                    buttons: [{
+                        text:'添加',
+                        iconCls:'icon-newadd',
+                        handler:function(){
+                        addRole();
+                        }
+                    },{
+                        text:'取消',
+                        iconCls:'icon-cancel',
+                        handler:function(){
+                            $('#add_dlg').dialog('close');
+                        }
+                    }]
+                ">
+        <form id="add_dlg_f" method="post" style="width:280px;padding-left:5px;padding-top:10px;float: left">
+            <table style="font-size:10px;">
+                <tr>
+                    <td>角色名称:</td>
+                    <td><input id="add_dialog_roleName" data-options="required:true" class="easyui-textbox" type="text"
+                               name="roleName" style="width:200px;height:32px;"></input></td>
+                </tr>
+                <tr>
+                    <td>角色描述:</td>
+                    <td><input id="add_dialog_roleDescription" data-options="required:true" class="easyui-textbox" type="text"
+                               name="roleDescription" style="width:200px;height:32px;"></input></td>
+                </tr>
+
+                <tr>
+                    <td>角色权限:</td>
+                    <td><input id="add_dialog_roleResourceIds" data-options="required:true" class="easyui-textbox" type="text" editable="false"
+                               name="roleResourceIds" style="width:200px;height:32px;"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><a href="#"
+                           onclick="addResourcesToText()"
+                           class="easyui-linkbutton c1"
+                           style="background-color: rgb(0,125,255);width: 100%;color: #E9E7E7"
+                           data-options="plain:true,toggle:true,group:'g1'"
+                           style="width: 100%; text-align: left; padding-left: 20px">添加右侧权限</a>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <div style="width:280px;float:right;padding-top:10px;border:#0d478f 1px dashed">
+            <ul id="roleResourceIdsTree" class="easyui-tree"
+                data-options="method:'get',animate:true,checkbox:true"></ul>
+        </div>
+    </div>
+</body>
+</html>

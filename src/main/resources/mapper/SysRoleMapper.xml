@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cug.lab.dao.SysRoleMapper">
+    <resultMap id="BaseResultMap" type="com.cug.lab.model.SysRole">
+        <id column="roleId" property="roleId" jdbcType="BIGINT"/>
+        <result column="roleName" property="roleName" jdbcType="VARCHAR"/>
+        <result column="roleLevel" property="roleLevel" jdbcType="INTEGER"/>
+        <result column="roleDescription" property="roleDescription" jdbcType="VARCHAR"/>
+        <result column="roleResourceIds" property="roleResourceIds" jdbcType="VARCHAR"/>
+        <result column="roleAvailable" property="roleAvailable" jdbcType="BIT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    roleId, roleName, roleDescription, roleLevel , roleResourceIds, roleAvailable
+  </sql>
+
+    <insert id="createRole" parameterType="com.cug.lab.model.SysRole">
+        insert into sys_role ( roleName,roleLevel,roleDescription, roleResourceIds, roleAvailable)
+        values (#{roleName,jdbcType=VARCHAR}, #{roleLevel,jdbcType=INTEGER}, #{roleDescription,jdbcType=VARCHAR},
+          #{roleResourceIds,jdbcType=VARCHAR}, #{roleAvailable,jdbcType=BIT})
+      </insert>
+
+    <update id="updateRole" parameterType="com.cug.lab.model.SysRole">
+        update sys_role
+        <set>
+            <if test="roleName != null">
+                roleName = #{roleName,jdbcType=VARCHAR},
+            </if>
+            <if test="roleDescription != null">
+                roleDescription = #{roleDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="roleLevel != null">
+                roleLevel = #{roleLevel,jdbcType=INTEGER},
+            </if>
+            <if test="roleResourceIds != null">
+                roleResourceIds = #{roleResourceIds,jdbcType=VARCHAR},
+            </if>
+            <if test="roleAvailable != null">
+                roleAvailable = #{roleAvailable,jdbcType=BIT},
+            </if>
+        </set>
+        where roleId = #{roleId,jdbcType=BIGINT}
+    </update>
+
+    <delete id="deleteRole" parameterType="java.lang.Long">
+    delete from sys_role
+    where roleId = #{roleId,jdbcType=BIGINT}
+  </delete>
+
+    <delete id="deleteListUser" parameterType="java.util.List">
+        DELETE FROM sys_role
+        where roleId in
+        <foreach collection="list" index="index" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="findOne" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role
+        where roleId = #{roleId,jdbcType=BIGINT}
+    </select>
+
+    <select id="findListByName" resultMap="BaseResultMap" parameterType="java.util.Set">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role
+        where roleName in
+        <foreach collection="roles" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="findAll" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role
+    </select>
+
+    <select id="getTotle" resultType="Integer">
+   select count(*)
+    from sys_role
+  </select>
+
+
+    <select id="checkRoleName" resultMap="BaseResultMap" parameterType="com.cug.lab.model.SysUser">
+    select *
+    from sys_role
+    where roleName = #{roleName,jdbcType=VARCHAR}
+  </select>
+</mapper>
