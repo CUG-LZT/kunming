@@ -42,7 +42,6 @@ public class SysResController {
     public MsgToPage<SysResource> createResource(SysResource sysResource){
         MsgToPage<SysResource> sysResourceMsgToPage = new MsgToPage<SysResource>();
         //根据父节点获取已有子节点id组合然后计算出最大值 加1 赋给id 但是范围在0-9
-
         List<SysResource> resourceList = resourceService.findChildsByParentId(sysResource.getResParentId());
         //去URL空格
         sysResource.setResUrl(sysResource.getResUrl().replaceAll(" ", ""));
